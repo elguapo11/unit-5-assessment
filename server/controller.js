@@ -1,3 +1,15 @@
+require("dotenv").config(); 
+const {CONNECTION_STRING} = process.env; 
+const Sequelize = require("sequelize"); 
+
+const sequelize = new Sequelize(CONNECTION_STRING, {
+    dialect: 'postgres',
+    dialectOptions: {
+        ssl: {
+            rejectUnauthorized: false
+        }
+    }
+  }); 
 
 
 module.exports = {
@@ -11,7 +23,12 @@ module.exports = {
                 name varchar
             );
 
-            *****YOUR CODE HERE*****
+           create table cities (
+                city_id: serial, primary key,
+                name: varchar;
+                rating: integer; 
+                country_id: select country_id from countries; 
+           )
 
             insert into countries (name)
             values ('Afghanistan'),
@@ -215,3 +232,41 @@ module.exports = {
         }).catch(err => console.log('error seeding DB', err))
     }
 }
+
+module.exports = {
+    getCountries: (req, res) => {
+        sequelize.query(`SELECT * FROM countries`)
+            .then((dbResult) => {
+                console.log(dbResult); 
+                res.status(200).send(dbResult[0]); 
+            })
+            .catch((err) => console.log(err)); 
+    }
+}
+
+module.exports = {
+    createCity  : (req, res) => {
+        let {
+            name, 
+            rating, 
+            country_id, 
+        } = req.body
+
+        sequelize.query(`insert into countries set name = '${name}', 
+        rating = '${rating}', 
+        where country_id = '${country_id}'
+        .then(() => res.sendStatus(200))
+        .catch(err => console.log(err))
+
+    getCities: (req, res) => {
+        sequelize.query(`SELECT * FROM countries and tables)
+        .then(() => res.sendStatus(200))
+        .catch(err => console.log(err))
+    }    
+
+    deleteCity: (req, res) => {
+        sequelize.query
+
+        //Wasn't able to figure out how to delete
+        .then(() => res.sendStatus(200))
+        .catch(err => console.log(err))
